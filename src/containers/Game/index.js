@@ -144,7 +144,7 @@ function Game (props) {
   };
 
   const savePlayerDetails = (isWinner) => {
-    axios.post('http://localhost:4000/players', {
+    axios.post('https://dragonslayer-app.herokuapp.com/players', {
       player_id: props.player_id,
       is_winner: isWinner
     });

@@ -12,7 +12,7 @@ function Players () {
 
 
   useEffect(() => {
-      axios.get('http://localhost:4000/players')
+      axios.get('https://dragonslayer-app.herokuapp.com/players')
         .then(response => {
             dispatch({
               type: GET_PLAYERS,
