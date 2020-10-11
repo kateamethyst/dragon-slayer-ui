@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import dragon from '../../assets/images/dragon.jpg';
 import hero from '../../assets/images/hunter.png';
 import '../../assets/css/game.css';
 import { randomIntFromInterval } from '../../helpers';
 import axios from 'axios';
-
+import HpComponent from '../../components/HpComponent';
+import ActivityComponent from '../../components/ActivityComponent';
 
 function Game (props) {
   const [styleHunterHp, setStyleHunterHp] = useState({
@@ -27,6 +28,9 @@ function Game (props) {
   const [hunterActivity, setHunterActivity] = useState([]);
   const [monsterActivity, setMonsterActivity] = useState([]);
 
+  /**
+   * Hunter Attack
+   */
   const handleOnClickAttack =  () => {
     const attack = randomIntFromInterval(3, 5);
     let currentHp = (monsterHp - attack) < 0 ? 0 : (monsterHp - attack);
@@ -43,8 +47,11 @@ function Game (props) {
     }, 1500);
   };
   
+  /**
+   * Hunter Slash
+   */
   const handleOnClickSlash =  () => {
-    const attack = randomIntFromInterval(5, 20);
+    const attack = randomIntFromInterval(5, 15);
     let currentHp = (monsterHp - attack) < 0 ? 0 : (monsterHp - attack);
     setMonsterHp(currentHp);
     setStyleMonsterHp({width: `${currentHp}%`});
@@ -59,6 +66,9 @@ function Game (props) {
     }, 1500);
   };
 
+  /**
+   * Hunter Spirit Blade
+   */
   const handleOnClickSpiritBlade =  () => {
     const attack = randomIntFromInterval(25, 25);
     let currentHp = (monsterHp - attack) < 0 ? 0 : (monsterHp - attack);
@@ -79,22 +89,20 @@ function Game (props) {
     setSuperAttackMin(superAttackMin - 1);
   };
 
-  const handleOnClickHeal =  () => {
-    const heal = randomIntFromInterval(10, 20);
-    let currentHp = hunterHp + heal;
-    setHunterHp(currentHp);
-    setStyleHunterHp({width: `${currentHp}%`});
-    setTurn('monster');
-    checkLife(currentHp, hunterHp);
-    setHunterActivity([
-      `Hunter use Heal and gain ${heal} hp`,
-      ...hunterActivity
-    ]);
-    setTimeout(() => {
-      monsterAttack();
-    }, 1500);
-  };
-  console.log(props);
+  /**
+   * Hunter gives up
+   */
+  const handleOnClickGiveUp = () => {
+    setSuccessMessage('Hunter Gives Up, Rathalos Wins');
+    setModalStyle({
+      display: 'block'
+    });
+    savePlayerDetails('NO');
+  }
+
+  /**
+   * Monster Attack
+   */
   const monsterAttack = () => {
     let damage = randomIntFromInterval(4, 20);
     if (damage <= 5) {
@@ -117,7 +125,10 @@ function Game (props) {
         ...monsterActivity
       ]);
     }
-    let hunterLife = (hunterHp - damage) <= 0 ? 0 : (hunterHp - damage);
+    let hunterLife = hunterHp - damage;
+    if (hunterLife < 0) {
+      hunterLife = 0;
+    }
     setHunterHp(hunterLife);
     setStyleHunterHp({width: `${hunterLife}%`});
     setTurn('hunter');
@@ -125,6 +136,11 @@ function Game (props) {
   }
 
   const [successMessage, setSuccessMessage] = useState('');
+  /**
+   * Check monster and hunters life
+   * @param {int} monster 
+   * @param {int} hunter 
+   */
   const checkLife = (monster, hunter) => {
     if (hunter <= 0) {
       setModalStyle({
@@ -143,20 +159,16 @@ function Game (props) {
 
   };
 
+  /**
+   * Save player details
+   * @param {string} isWinner 
+   */
   const savePlayerDetails = (isWinner) => {
     axios.post('https://dragonslayer-app.herokuapp.com/players', {
       player_id: props.player_id,
       is_winner: isWinner
     });
   };
-
-  const handleOnClickGiveUp = () => {
-    setSuccessMessage('Hunter Gives Up, Rathalos Wins');
-    setModalStyle({
-      display: 'block'
-    });
-    savePlayerDetails('NO');
-  }
 
   return (
     <>
@@ -165,32 +177,21 @@ function Game (props) {
           <div className="hunter-container col-sm-6">
             <img src={hero} alt="Hunter" />
             <p>Hunter (Player Id: {props.player_id})</p>
-            <div className="progress">
-              <div className="progress-bar bg-success" role="progressbar" aria-valuenow={monsterHp} aria-valuemin="0" aria-valuemax="100" style={styleHunterHp}></div>
-            </div>
+            <HpComponent hp={hunterHp} style={styleHunterHp} />
             <br />
             <div>
               <button className="mx-2 btn btn-warning" disabled={turn === 'monster'} onClick={handleOnClickAttack}>Attack</button>
               <button className="mx-2 btn btn-info" disabled={turn === 'monster'} onClick={handleOnClickSlash}>Slash</button>
               <button className="mx-2 btn btn-primary" onClick={handleOnClickSpiritBlade} disabled={superAttackMin === 0 || turn === 'monster'}>{superAttackMin > 0 ? superAttackMin : 0} Spirit Blade</button>
-              <button className="mx-2 btn btn-success" disabled={turn === 'monster'} onClick={handleOnClickHeal}>Heal</button>
               <button className="mx-2 btn btn-secondary" onClick={handleOnClickGiveUp} disabled={turn === 'monster'}>Give Up</button>
             </div>
             <br />
-            <div className="activity p-3 text-left">
-              {hunterActivity ? hunterActivity.map((activity, index) => {
-                return (
-                  <p key={index}>{activity}</p>
-                ); 
-              }) : ''}
-            </div>
+            <ActivityComponent activity={hunterActivity} />
           </div>
           <div className="col-sm-6 monster-container">
             <img src={dragon} alt="Rathalos Dragon" />
             <p>Rathalos Dragon</p>
-            <div className="progress">
-              <div className="progress-bar bg-success" role="progressbar" aria-valuenow={monsterHp} aria-valuemin="0" aria-valuemax="100" style={styleMmonsterHp}></div>
-            </div>
+            <HpComponent hp={monsterHp} style={styleMmonsterHp} />
             <br />
             <div>
               <button className="mx-2 btn btn-warning" disabled={turn === 'hunter'} onClick={handleOnClickAttack}>Bite</button>
@@ -198,21 +199,15 @@ function Game (props) {
               <button className="mx-2 btn btn-primary" onClick={handleOnClickSpiritBlade} disabled={turn === 'hunter'}>Blast</button>
             </div>
             <br />
-            <div className="activity p-3 text-left">
-              {monsterActivity ? monsterActivity.map((activity, index) => {
-                return (
-                  <p key={index}>{activity}</p>
-                ); 
-              }) : ''}
-            </div>
+            <ActivityComponent activity={monsterActivity} />
           </div>
         </div>
       </div>
-      <div class="modal fade show" id="exampleModal" data-backdrop="static" style={modalStyle} tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-body">
-              {successMessage === 'Rathalos Wins' ? (<img src={dragon} className="dragon" />) : (<img src={hero} className="dragon" />)}
+      <div className="modal fade show" id="exampleModal" data-backdrop="static" style={modalStyle} aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-body">
+              {successMessage === 'Rathalos Wins' ? (<img src={dragon} alt="Rathalos" className="dragon" />) : (<img src={hero} alt="Hunter" className="dragon" />)}
               <h3 className="py-3">{successMessage}</h3>
               <button type="button" className="btn btn-primary btn-lg" data-dismiss="modal" onClick={() => {window.location = '/'}}>Close</button>
             </div>

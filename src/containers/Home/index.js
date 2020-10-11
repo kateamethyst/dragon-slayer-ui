@@ -1,11 +1,8 @@
 import React, { useEffect, useReducer, useState } from 'react';
-import dragon from '../../assets/images/dragon.jpg';
 import { generateBase62UuId } from '../../helpers';
-import axios from 'axios';
 import Game from '../Game/index';
 import {dragonSlayerReducer} from './reducer';
 import { SET_PLAYER_ID } from './actions';
-
 
 function Home () {
   const initialState = {
@@ -26,13 +23,20 @@ function Home () {
   }, []);
 
   const [state, dispatch] = useReducer(dragonSlayerReducer, initialState);
-  const {player_id} = state;
+  const { player_id } = state;
+
   return (
     <>
       <div className="home" hidden={!isHidden}>
         <div className="text-center align-center pt-5">
           <p className="fontLucky pt-5">Dragon Slayer</p>
-          <button onClick={handleOnClickPlayNow} type="button" className="btn btn-dark btn-lg">Play Now</button>
+          <button
+            onClick={handleOnClickPlayNow}
+            type="button"
+            className="btn btn-dark btn-lg"
+          >
+            Play Now
+          </button>
         </div>
       </div>
       <div className="text-center align-center" hidden={isHidden}>
