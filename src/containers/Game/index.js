@@ -161,7 +161,7 @@ function Game (props) {
   return (
     <>
       <div className="container">
-        <div className="row">
+        <div className="row py-5">
           <div className="hunter-container col-sm-6">
             <img src={hero} alt="Hunter" />
             <p>Hunter (Player Id: {props.player_id})</p>
