@@ -1,0 +1,42 @@
+.hunter-container > img {
+    height: 350px;
+    width: 100%;
+    object-fit: contain;
+}
+
+.monster-container > img {
+    height: 350px;
+    width: 100%;
+    object-fit: contain;
+}
+
+.dragon {
+    height: 150px;
+    width: 100%;
+    object-fit: contain;
+}
+
+.activity {
+    height: 200px;
+    max-height: 200px;
+    min-height: 200px;
+    overflow-y: scroll;
+    border: 1px solid #eee;
+    font-size: 14px;
+}
+
+.home {
+    background: url('../images/background2.jpg'), linear-gradient(to bottom right,rgba(0,0,0, 0.5),rgba(0,0,0, 0.5)) no-repeat ;
+    height: 100vh;
+    background-size: cover;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+
+.fontLucky {
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 80px;
+  color: #fff;
+  text-shadow: 2px 4px 10px #353535;
+  margin-top: 200px;
+}
