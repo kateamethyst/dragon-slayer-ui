@@ -3,6 +3,8 @@ import axios from 'axios';
 import moment from 'moment';
 import {playerReducer} from './reducer';
 import { GET_PLAYERS } from './actions';
+import dragon from '../../assets/images/dragon.jpg';
+import hero from '../../assets/images/hunter.png';
 
 function Players () {
   const initialState = {
@@ -78,25 +80,34 @@ function Players () {
           </button>
         </div>
       </div>
-      {filteredPlayers ? 
-      (filteredPlayers.map(player => {
-        return (
-          <div className="card my-3" key={player.player_id}>
-            <div className="card-body">
-              <p>Player ID: {player.player_id}</p>
-              <p>{player.is_winner === 'YES' ? (<span className="text-success">Hunter Wins</span>) : (<span className="text-danger">Rathalos Wins</span>)}</p>
-              <p>Date Played: {moment(player.created_at).format('MMMM Do YYYY, h:mm:ss a')}</p>
+      <div className="d-flex justify-content-center flex-wrap">
+        {filteredPlayers.length > 0 ? 
+        (filteredPlayers.map(player => {
+          return (
+            <div className="card mb-3 mx-2" key={player._id}>
+              <div className="row no-gutters">
+                <div className="col-md-4">
+                  {player.is_winner === 'NO' ? <img src={dragon} className="card-img" alt="..." /> : <img src={hero} className="card-img" alt="..." />}
+                </div>
+                <div className="col-md-8">
+                  <div className="card-body">
+                    <h5 className="card-title">Player ID: {player.player_id}</h5>
+                    <p>{player.is_winner === 'YES' ? (<span className="text-success">Hunter Wins</span>) : (<span className="text-danger">Rathalos Wins</span>)}</p>
+                    <p className="card-text"><small className="text-muted">Date Played: {moment(player.created_at).format('MMMM Do YYYY, h:mm:ss a')}</small></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })) : (
+          <div className="text-center">
+            <div className="spinner-grow text-primary" role="status">
+              <span className="sr-only">Loading...</span>
             </div>
           </div>
         )
-      })) : (
-        <div className="text-center">
-          <div className="spinner-grow text-primary" role="status">
-            <span className="sr-only">Loading...</span>
-          </div>
-        </div>
-      )
-      }
+        }
+      </div>
     </div>
   )
 }

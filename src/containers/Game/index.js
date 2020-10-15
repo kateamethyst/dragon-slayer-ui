@@ -136,6 +136,7 @@ function Game (props) {
   }
 
   const [successMessage, setSuccessMessage] = useState('');
+
   /**
    * Check monster and hunters life
    * @param {int} monster 
@@ -143,6 +144,7 @@ function Game (props) {
    */
   const checkLife = (monster, hunter) => {
     if (hunter <= 0) {
+      setTurn('');
       setModalStyle({
         display: 'block'
       });
@@ -150,6 +152,7 @@ function Game (props) {
       savePlayerDetails('NO');
     }
     if (monster <= 0) {
+      setTurn('');
       setModalStyle({
         display: 'block'
       });
@@ -177,37 +180,90 @@ function Game (props) {
           <div className="hunter-container col-sm-6">
             <img src={hero} alt="Hunter" />
             <p>Hunter (Player Id: {props.player_id})</p>
+            {/* ========= HP Component ======== */}
             <HpComponent hp={hunterHp} style={styleHunterHp} />
             <br />
             <div>
-              <button className="mx-2 btn btn-warning" disabled={turn === 'monster'} onClick={handleOnClickAttack}>Attack</button>
-              <button className="mx-2 btn btn-info" disabled={turn === 'monster'} onClick={handleOnClickSlash}>Slash</button>
-              <button className="mx-2 btn btn-primary" onClick={handleOnClickSpiritBlade} disabled={superAttackMin === 0 || turn === 'monster'}>{superAttackMin > 0 ? superAttackMin : 0} Spirit Blade</button>
-              <button className="mx-2 btn btn-secondary" onClick={handleOnClickGiveUp} disabled={turn === 'monster'}>Give Up</button>
+              <button
+                className="mx-2 btn btn-warning"
+                disabled={turn === 'monster'}
+                onClick={handleOnClickAttack}
+              >
+                Attack
+              </button>
+              <button
+                className="mx-2 btn btn-info"
+                disabled={turn === 'monster'}
+                onClick={handleOnClickSlash}
+              >
+                Slash
+              </button>
+              <button
+                className="mx-2 btn btn-primary"
+                onClick={handleOnClickSpiritBlade}
+                disabled={superAttackMin === 0 || turn === 'monster'}
+              >
+                {superAttackMin > 0 ? superAttackMin : 0} Spirit Blade
+              </button>
+              <button
+                className="mx-2 btn btn-secondary"
+                onClick={handleOnClickGiveUp}
+                disabled={turn === 'monster'}
+              >
+                Give Up
+              </button>
             </div>
             <br />
+            {/* ========= Activity Component ======== */}
             <ActivityComponent activity={hunterActivity} />
           </div>
           <div className="col-sm-6 monster-container">
             <img src={dragon} alt="Rathalos Dragon" />
             <p>Rathalos Dragon</p>
+            {/* ========= HP Component ======== */}
             <HpComponent hp={monsterHp} style={styleMmonsterHp} />
             <br />
             <div>
-              <button className="mx-2 btn btn-warning" disabled={turn === 'hunter'} onClick={handleOnClickAttack}>Bite</button>
-              <button className="mx-2 btn btn-info" disabled={turn === 'hunter'} onClick={handleOnClickSlash}>Claw Attack</button>
-              <button className="mx-2 btn btn-primary" onClick={handleOnClickSpiritBlade} disabled={turn === 'hunter'}>Blast</button>
+              <button 
+                className="mx-2 btn btn-warning"
+                disabled={turn === 'hunter'}
+                onClick={handleOnClickAttack}
+              >
+                Bite
+              </button>
+              <button
+                className="mx-2 btn btn-info"
+                disabled={turn === 'hunter'}
+                onClick={handleOnClickSlash}
+              >
+                Claw Attack
+              </button>
+              <button
+                className="mx-2 btn btn-primary" 
+                onClick={handleOnClickSpiritBlade}
+                disabled={turn === 'hunter'}
+              >
+                Blast
+              </button>
             </div>
             <br />
+            {/* ========= Activity Component ======== */}
             <ActivityComponent activity={monsterActivity} />
           </div>
         </div>
       </div>
-      <div className="modal fade show" id="exampleModal" data-backdrop="static" style={modalStyle} aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div 
+        className="modal fade show"
+        id="exampleModal"
+        data-backdrop="static"
+        style={modalStyle}
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-body">
-              {successMessage === 'Rathalos Wins' ? (<img src={dragon} alt="Rathalos" className="dragon" />) : (<img src={hero} alt="Hunter" className="dragon" />)}
+              {successMessage === 'Hunter Wins' ? (<img src={hero} alt="Hunter" className="dragon" />) : (<img src={dragon} alt="Rathalos" className="dragon" />)}
               <h3 className="py-3">{successMessage}</h3>
               <button type="button" className="btn btn-primary btn-lg" data-dismiss="modal" onClick={() => {window.location = '/'}}>Close</button>
             </div>
